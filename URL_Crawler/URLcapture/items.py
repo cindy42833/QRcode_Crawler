@@ -10,3 +10,5 @@ class UrlcaptureItem(scrapy.Item):
     # define the fields for your item here like:
     urls = scrapy.Field()
     layer = scrapy.Field()
+    category = scrapy.Field()
+    indomain = scrapy.Field()

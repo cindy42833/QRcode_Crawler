@@ -9,15 +9,11 @@ class ExampleSpider(scrapy.Spider):
     name = 'example'
     input_urls_directory = os.path.abspath("./output") + '/urls/'
     start_urls = []
-    col_list = ["layer", "urls"]
+    col_list = ["category", "layer", "indomain", "urls"]
 
     def __init__(self, input = None, *args, **kwargs): 
         super(ExampleSpider, self).__init__(*args, **kwargs) 
         self.input_urls_directory += input
-
-        # Import crwal links
-        # with open(self.input_urls_directory, 'rb') as file:
-            # self.start_urls = [line[1].strip() for line in file]
 
         df = pd.read_csv(self.input_urls_directory, usecols = self.col_list, encoding= 'unicode_escape')
         self.start_urls = df["urls"].tolist()
@@ -40,11 +36,16 @@ class ExampleSpider(scrapy.Spider):
                     complet_url = response.urljoin(url)
                     target_domain = self.getDomain(complet_url)
                     
+                    item = UrlcaptureItem()
+                    item['urls'] = complet_url
+
                     # Compare the target url is in the same domain with the request url
                     if domain == target_domain:
-                        item = UrlcaptureItem()
-                        item['urls'] = complet_url
-                        yield item
+                        item['indomain'] = 1
+                    else:
+                        item['indomain'] = 0
+                    
+                    yield item
 
     def getDomain(self, url):
         request_url = url.split('/')

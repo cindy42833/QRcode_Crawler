@@ -1,0 +1,1 @@
+python3 check_QR.py cat1/full root_cat1_record.csv
